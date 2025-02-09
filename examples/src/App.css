@@ -1,46 +1,63 @@
+/* Import Noto Sans font from Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;700&display=swap');
+
 html,
 body {
   margin: 0;
   height: 100%;
   width: 100%;
   font-size: 12px;
-  font-family: 'SF UI Text', -apple-system, BlinkMacSystemFont, 'Segoe UI',
-    Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
-    'Segoe UI Symbol';
+  font-family: 'Noto Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
 }
+
 #root,
 #react-org-chart {
   margin: 0;
-  cursor: move;
   height: 100%;
   width: 100%;
   background-color: #f7f9fa;
 }
+
+.org-chart-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 20px;
+}
+
 .org-chart-person-name {
   font-weight: 500;
 }
+
 .org-chart-person-link:hover g {
   fill: #409cf9 !important;
 }
+
 .org-chart-node:hover .org-chart-person-reports {
   fill: #409cf9 !important;
 }
+
 .org-chart-person-dept.engineering {
   fill: #4caf50 !important;
 }
+
 .org-chart-person-dept.communications {
   fill: #3f51b5 !important;
 }
+
 .org-chart-person-dept.product {
   fill: #d500f9 !important;
 }
+
 .org-chart-person-dept.hr {
   fill: #2196f3 !important;
 }
+
 .org-chart-person-dept.marketing {
   fill: #f44336 !important;
 }
+
 .org-chart-person-dept.design {
   fill: #26c6da !important;
 }
@@ -96,4 +113,24 @@ body {
   font-size: 16px;
   margin-left: 8px;
   margin-right: 16px;
+}
+
+.org-chart-title {
+  text-align: center;
+  margin-top: 20px;
+  font-size: 2em;
+  font-weight: bold;
+  color: #333;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.1);
+  position: relative;
+}
+
+.org-chart-title::after {
+  content: '';
+  display: block;
+  width: 50%;
+  height: 2px;
+  background: #333;
+  margin: 10px auto 0;
+  opacity: 0.5;
 }

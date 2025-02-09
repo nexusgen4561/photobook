@@ -1,8 +1,6 @@
 const d3 = require('d3')
 const { wrapText, helpers, covertImageToBase64 } = require('../utils')
 const renderLines = require('./renderLines')
-const exportOrgChartImage = require('./exportOrgChartImage')
-const exportOrgChartPdf = require('./exportOrgChartPdf')
 const onClick = require('./onClick')
 const iconLink = require('./components/iconLink')
 const supervisorIcon = require('./components/supervisorIcon')
@@ -166,9 +164,10 @@ function render(config) {
     .attr('y', avatarPos.y)
     .attr('stroke', borderColor)
     .attr('s', d => {
-      d.person.hasImage
-        ? d.person.avatar
-        : loadImage(d).then(res => {
+      if (d.person.hasImage) {
+        return d.person.avatar
+      } else {
+        loadImage(d).then(res => {
           covertImageToBase64(res, function (dataUrl) {
             d3.select(`#image-${d.id}`).attr('href', dataUrl)
             d.person.avatar = dataUrl
@@ -176,6 +175,7 @@ function render(config) {
           d.person.hasImage = true
           return d.person.avatar
         })
+      }
     })
     .attr('src', d => d.person.avatar)
     .attr('href', d => d.person.avatar)
@@ -250,13 +250,7 @@ function render(config) {
   config.nodeY = nodeY
   config.nodeLeftX = nodeLeftX * -1
 
-  d3.select(downloadImageId).on('click', function () {
-    exportOrgChartImage(config)
-  })
 
-  d3.select(downloadPdfId).on('click', function () {
-    exportOrgChartPdf(config)
-  })
   onConfigChange(config)
 }
 module.exports = render

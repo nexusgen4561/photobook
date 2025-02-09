@@ -10,7 +10,7 @@ function onClick(configOnClick) {
     if (d3.event.defaultPrevented) return
     const config = loadConfig()
     const { loadChildren, render, onPersonClick } = config
-    event.preventDefault()
+    d3.event.preventDefault() // Use d3.event instead of event
 
     if (onPersonClick) {
       const result = onPersonClick(datum, d3.event)
@@ -22,8 +22,8 @@ function onClick(configOnClick) {
       }
     }
 
-    // Open a certain link when a node is clicked
-    window.open(`https://example.com/${datum.id}`, '_blank')
+    // Navigate to a different route in your React app
+    window.location.href = `/department/${datum.id}`
 
     // If this person doesn't have children but `hasChild` is true,
     // attempt to load using the `loadChildren` config function

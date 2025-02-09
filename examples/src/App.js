@@ -1,9 +1,11 @@
 import React from 'react'
 import './App.css'
-import OrgChart from '@unicef/react-org-chart'
-import { BrowserRouter, Route } from 'react-router-dom'
-import { tree, tree1, tree2, tree3, tree4 } from './Tree'
+import OrgChart from './components/reactorgchart'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
+import { tree } from './Tree'
 import avatarPersonnel from './assets/avatar-personnel.svg'
+import DepartmentPage from './pages/DepartmentPage'
+import Navbar from './components/Navbar'
 
 export default class App extends React.Component {
   constructor(props) {
@@ -18,54 +20,11 @@ export default class App extends React.Component {
   }
 
   getChild = id => {
-    switch (id) {
-      case 100:
-        return tree1
-      case 36:
-        return tree2
-      case 56:
-        return tree3
-      case 25:
-        return tree4
-      default:
-        return console.log('no children')
-    }
+    return console.log('no children')
   }
 
   getParent = d => {
-    if (d.id === 100) {
-      return {
-        id: 500,
-        person: {
-          id: 500,
-          avatar: avatarPersonnel,
-          department: '',
-          name: 'Pascal ruth',
-          title: 'Member',
-          totalReports: 1,
-        },
-        hasChild: false,
-        hasParent: true,
-        children: [d],
-      }
-    } else if (d.id === 500) {
-      return {
-        id: 1,
-        person: {
-          id: 1,
-          avatar: avatarPersonnel,
-          department: '',
-          name: 'Bryce joe',
-          title: 'Director',
-          totalReports: 1,
-        },
-        hasChild: false,
-        hasParent: false,
-        children: [d],
-      }
-    } else {
-      return d
-    }
+    return d
   }
 
   handleDownload = () => {
@@ -81,77 +40,54 @@ export default class App extends React.Component {
     return config
   }
 
-  render() {
-    const { tree, downloadingChart } = this.state
+  handleNodeClick = node => {
+    this.props.history.push(`/department/${node.id}`)
+  }
 
-    //For downloading org chart as image or pdf based on id
-    const downloadImageId = 'download-image'
-    const downloadPdfId = 'download-pdf'
+  render() {
+    const { tree } = this.state
 
     return (
-      <BrowserRouter basename="/react-org-chart">
-        <Route exact path="/">
-          <React.Fragment>
-            <div className="zoom-buttons">
-              <button
-                className="btn btn-outline-primary zoom-button"
-                id="zoom-in"
-              >
-                +
-              </button>
-              <button
-                className="btn btn-outline-primary zoom-button"
-                id="zoom-out"
-              >
-                -
-              </button>
-            </div>
-            <div className="download-buttons">
-              <button className="btn btn-outline-primary" id="download-image">
-                Download as image
-              </button>
-              <button className="btn btn-outline-primary" id="download-pdf">
-                Download as PDF
-              </button>
-              <a
-                className="github-link"
-                href="https://github.com/unicef/react-org-chart"
-              >
-                Github
-              </a>
-              {downloadingChart && <div>Downloading chart</div>}
-            </div>
-            <OrgChart
-              tree={tree}
-              downloadImageId={downloadImageId}
-              downloadPdfId={downloadPdfId}
-              onConfigChange={config => {
-                this.handleOnChangeConfig(config)
-              }}
-              loadConfig={d => {
-                let configuration = this.handleLoadConfig(d)
-                if (configuration) {
-                  return configuration
-                }
-              }}
-              downlowdedOrgChart={d => {
-                this.handleDownload()
-              }}
-              loadImage={d => {
-                return Promise.resolve(avatarPersonnel)
-              }}
-              loadParent={d => {
-                const parentData = this.getParent(d)
-                return parentData
-              }}
-              loadChildren={d => {
-                const childrenData = this.getChild(d.id)
-                return childrenData
-              }}
-            />
-          </React.Fragment>
-        </Route>
-      </BrowserRouter>
+      <Router basename="/react-org-chart">
+        <Navbar />
+        <Switch>
+          <Route exact path="/">
+            <React.Fragment>
+              <h1 className="org-chart-title">JGC Philippines, Inc. Organizational Chart</h1> {/* Add title here */}
+              <OrgChart
+                tree={tree}
+                onConfigChange={config => {
+                  this.handleOnChangeConfig(config)
+                }}
+                loadConfig={d => {
+                  let configuration = this.handleLoadConfig(d)
+                  if (configuration) {
+                    return configuration
+                  }
+                }}
+                loadImage={d => {
+                  return Promise.resolve(avatarPersonnel)
+                }}
+                loadParent={d => {
+                  const parentData = this.getParent(d)
+                  return parentData
+                }}
+                loadChildren={d => {
+                  const childrenData = this.getChild(d.id)
+                  return childrenData
+                }}
+                onClickNode={this.handleNodeClick}
+                config={{
+                  zoom: false,  // Disable zooming
+                  pan: false,   // Disable panning
+                  scaleExtent: [1, 1], // Prevent zooming in/out
+                }}
+              />
+            </React.Fragment>
+          </Route>
+          <Route path="/department/:id" component={DepartmentPage} />
+        </Switch>
+      </Router>
     )
   }
 }
