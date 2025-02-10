@@ -47,15 +47,21 @@ function render(config) {
   config.links = links
   config.nodes = nodes
 
-  // Normalize for fixed-depth.
+  // Normalize for fixed-depth and handle row positioning.
   nodes.forEach(function (d) {
-    d.y = d.depth * lineDepthY
+    if (d.depth === 1) {
+      d.y = d.depth * lineDepthY
+    } else if (d.depth === 2) {
+      d.y = (d.depth - 1) * lineDepthY + 200 // Adjust the value 200 to control the spacing between rows
+    } else {
+      d.y = d.depth * lineDepthY
+    }
   })
 
   // Update the nodes
   const node = svg.selectAll('g.' + CHART_NODE_CLASS).data(
-    nodes.filter(d => d.id),
-    d => d.id
+    nodes.filter((d) => d.id),
+    (d) => d.id
   )
 
   const parentNode = sourceNode || treeData
@@ -76,7 +82,6 @@ function render(config) {
     .insert('g')
     .attr('class', CHART_NODE_CLASS)
     .attr('transform', `translate(${parentNode.x0}, ${parentNode.y0})`)
-    .on('click', onClick(config))
 
   // Person Card Shadow
   nodeEnter
@@ -94,10 +99,10 @@ function render(config) {
   // Person Card Container
   nodeEnter
     .append('rect')
-    .attr('class', d => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
+    .attr('class', (d) => (d.isHighlight ? `${PERSON_HIGHLIGHT} box` : 'box'))
     .attr('width', nodeWidth)
     .attr('height', nodeHeight)
-    .attr('id', d => d.id)
+    .attr('id', (d) => d.id)
     .attr('fill', backgroundColor)
     .attr('stroke', borderColor)
     .attr('rx', nodeBorderRadius)
@@ -124,8 +129,9 @@ function render(config) {
     .style('cursor', 'pointer')
     .style('fill', nameColor)
     .style('font-size', 14)
-    .text(d => d.person.name)
-  // .on('click', onParentClick(config))
+    .text((d) => d.person.name)
+    // .on('click', onParentClick(config))
+    .on('click', onClick(config))
 
   // Person's Title
   nodeEnter
@@ -137,7 +143,7 @@ function render(config) {
     .style('font-size', 12)
     .style('cursor', 'pointer')
     .style('fill', titleColor)
-    .text(d => d.person.title)
+    .text((d) => d.person.title)
 
   const heightForTitle = 60 // getHeightForText(d.person.title)
 
@@ -157,17 +163,17 @@ function render(config) {
   // Person's Avatar
   nodeEnter
     .append('image')
-    .attr('id', d => `image-${d.id}`)
+    .attr('id', (d) => `image-${d.id}`)
     .attr('width', avatarWidth)
     .attr('height', avatarWidth)
     .attr('x', avatarPos.x)
     .attr('y', avatarPos.y)
     .attr('stroke', borderColor)
-    .attr('s', d => {
+    .attr('s', (d) => {
       if (d.person.hasImage) {
         return d.person.avatar
       } else {
-        loadImage(d).then(res => {
+        loadImage(d).then((res) => {
           covertImageToBase64(res, function (dataUrl) {
             d3.select(`#image-${d.id}`).attr('href', dataUrl)
             d.person.avatar = dataUrl
@@ -177,17 +183,17 @@ function render(config) {
         })
       }
     })
-    .attr('src', d => d.person.avatar)
-    .attr('href', d => d.person.avatar)
+    .attr('src', (d) => d.person.avatar)
+    .attr('href', (d) => d.person.avatar)
     .attr('clip-path', 'url(#avatarClip)')
 
   // Person's Link
   const nodeLink = nodeEnter
     .append('a')
     .attr('class', PERSON_LINK_CLASS)
-    .attr('display', d => (d.person.link ? '' : 'none'))
-    .attr('xlink:href', d => d.person.link)
-    .on('click', datum => {
+    .attr('display', (d) => (d.person.link ? '' : 'none'))
+    .attr('xlink:href', (d) => d.person.link)
+    .on('click', (datum) => {
       d3.event.stopPropagation()
       // TODO: fire link click handler
       if (onPersonLinkClick) {
@@ -205,7 +211,7 @@ function render(config) {
   const nodeUpdate = node
     .transition()
     .duration(animationDuration)
-    .attr('transform', d => `translate(${d.x},${d.y})`)
+    .attr('transform', (d) => `translate(${d.x},${d.y})`)
 
   nodeUpdate
     .select('rect.box')
@@ -217,11 +223,11 @@ function render(config) {
     .exit()
     .transition()
     .duration(animationDuration)
-    .attr('transform', d => `translate(${parentNode.x},${parentNode.y})`)
+    .attr('transform', (d) => `translate(${parentNode.x},${parentNode.y})`)
     .remove()
 
   // Update the links
-  const link = svg.selectAll('path.link').data(links, d => d.target.id)
+  const link = svg.selectAll('path.link').data(links, (d) => d.target.id)
 
   // Wrap the title texts
   const wrapWidth = 124
@@ -240,7 +246,7 @@ function render(config) {
   var nodeLeftX = -70
   var nodeRightX = 70
   var nodeY = 200
-  nodes.map(d => {
+  nodes.map((d) => {
     nodeLeftX = d.x < nodeLeftX ? d.x : nodeLeftX
     nodeRightX = d.x > nodeRightX ? d.x : nodeRightX
     nodeY = d.y > nodeY ? d.y : nodeY
@@ -249,7 +255,6 @@ function render(config) {
   config.nodeRightX = nodeRightX
   config.nodeY = nodeY
   config.nodeLeftX = nodeLeftX * -1
-
 
   onConfigChange(config)
 }

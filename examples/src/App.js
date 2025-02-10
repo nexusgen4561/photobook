@@ -19,11 +19,11 @@ export default class App extends React.Component {
     }
   }
 
-  getChild = id => {
+  getChild = (id) => {
     return console.log('no children')
   }
 
-  getParent = d => {
+  getParent = (d) => {
     return d
   }
 
@@ -31,7 +31,7 @@ export default class App extends React.Component {
     this.setState({ downloadingChart: false })
   }
 
-  handleOnChangeConfig = config => {
+  handleOnChangeConfig = (config) => {
     this.setState({ config: config })
   }
 
@@ -40,7 +40,7 @@ export default class App extends React.Component {
     return config
   }
 
-  handleNodeClick = node => {
+  handleNodeClick = (node) => {
     this.props.history.push(`/department/${node.id}`)
   }
 
@@ -53,35 +53,33 @@ export default class App extends React.Component {
         <Switch>
           <Route exact path="/">
             <React.Fragment>
-              <h1 className="org-chart-title">JGC Philippines, Inc. Organizational Chart</h1> {/* Add title here */}
+              <h1 className="org-chart-title">
+                JGC Philippines, Inc. Organizational Chart
+              </h1>{' '}
+              {/* Add title here */}
               <OrgChart
                 tree={tree}
-                onConfigChange={config => {
+                onConfigChange={(config) => {
                   this.handleOnChangeConfig(config)
                 }}
-                loadConfig={d => {
+                loadConfig={(d) => {
                   let configuration = this.handleLoadConfig(d)
                   if (configuration) {
                     return configuration
                   }
                 }}
-                loadImage={d => {
+                loadImage={(d) => {
                   return Promise.resolve(avatarPersonnel)
                 }}
-                loadParent={d => {
+                loadParent={(d) => {
                   const parentData = this.getParent(d)
                   return parentData
                 }}
-                loadChildren={d => {
+                loadChildren={(d) => {
                   const childrenData = this.getChild(d.id)
                   return childrenData
                 }}
                 onClickNode={this.handleNodeClick}
-                config={{
-                  zoom: false,  // Disable zooming
-                  pan: false,   // Disable panning
-                  scaleExtent: [1, 1], // Prevent zooming in/out
-                }}
               />
             </React.Fragment>
           </Route>

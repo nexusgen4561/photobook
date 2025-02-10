@@ -36,6 +36,55 @@ export const tree = {
       children: [],
     },
     {
+      id: 'hidden-2',
+      person: {
+        id: 'hidden-2',
+        avatar: '',
+        department: '',
+        name: '',
+      },
+      hasChild: true,
+      hasParent: true,
+      children: [
+        {
+          id: 'sub-branch-4',
+          person: {
+            id: 'sub-branch-4',
+            avatar: avatarPersonnel,
+            department: 'Sub-Branch 4',
+            name: 'Sub-Branch 4',
+          },
+          hasChild: false,
+          hasParent: true,
+          children: [],
+        },
+        {
+          id: 'sub-branch-5',
+          person: {
+            id: 'sub-branch-5',
+            avatar: '',
+            department: '',
+            name: '',
+          },
+          hasChild: false,
+          hasParent: true,
+          children: [],
+        },
+        {
+          id: 'sub-branch-6',
+          person: {
+            id: 'sub-branch-6',
+            avatar: avatarPersonnel,
+            department: 'Sub-Branch 6',
+            name: 'Sub-Branch 6',
+          },
+          hasChild: false,
+          hasParent: true,
+          children: [],
+        },
+      ],
+    },
+    {
       id: 4,
       person: {
         id: 4,

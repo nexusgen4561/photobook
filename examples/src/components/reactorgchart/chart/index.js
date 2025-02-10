@@ -81,18 +81,14 @@ function init(options) {
     .attr('height', elemHeight)
 
   // Add our base svg group to transform when a user zooms/pans
-  const svg = svgroot
-    .append('g')
-    .attr(
-      'transform',
-      'translate(' +
-      parseInt(
-        childrenWidth + (elemWidth - childrenWidth * 2) / 2 - margin.left / 2
-      ) +
+  const svg = svgroot.append('g').attr(
+    'transform',
+    'translate(' +
+      parseInt(elemWidth / 2 - nodeWidth / 2) + // Center horizontally
       ',' +
-      48 +
+      '0' + // Do not center vertically
       ')'
-    )
+  )
 
   // Define box shadow and avatar border radius
   defineBoxShadow(svgroot, 'boxShadow')
@@ -106,6 +102,26 @@ function init(options) {
 
   // Collapse all of the children on initial load
   treeData.children.forEach(collapse)
+  treeData.children._children = treeData.children.children
+  console.log(treeData.children)
+
+  // Filter out nodes that should be hidden
+  function filterHiddenNodes(node) {
+    if (
+      node.person.avatar === '' &&
+      node.person.department === '' &&
+      node.person.name === '' &&
+      node._children.length === 0
+    ) {
+      return false
+    }
+    if (node._children) {
+      node._children = node._children.filter(filterHiddenNodes)
+    }
+    return true
+  }
+
+  treeData.children = treeData.children.filter(filterHiddenNodes)
 
   // Connect core variables to config so that they can be
   // used in internal rendering functions
